@@ -15,3 +15,5 @@ and then
 library(dplyr)
 library(tidyr)
 ```
+
+- Please bring a fully charged laptop to the workshop
