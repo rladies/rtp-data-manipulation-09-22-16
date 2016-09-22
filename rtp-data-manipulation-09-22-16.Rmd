@@ -84,12 +84,14 @@ workshop
 
 - Install these packages by running the following in the Console:
 ```{r install-packages, eval=FALSE}
+install.packages("readr")
 install.packages("tidyr")
 install.packages("dplyr")
 ```
 
 - Then, load the packages by running the following:
 ```{r load-packages, message=FALSE}
+library(readr)
 library(tidyr)
 library(dplyr)
 ```
@@ -97,9 +99,29 @@ library(dplyr)
 - This is just one way of installing a package, there is also a GUI approach in 
 the Packages pane in RStudio
 
-# Reproducible data analysis with R Markdown
+# Keeping track of your code
 
-## What is R Markdown?
+## Two options: R Script or R Markdown
+
+- Do not just type code in the Console, it's error prone (especially typo prone!) and hard to keep track of
+
+- Use one of the two following options:
+  + R Script: File -> New File -> R Script
+  + R Markdown: File -> New File -> R Markdown
+
+## R Script
+
+- Type your code in the R Script
+
+- Use curser + Run or highlight + Run
+
+- Shortcut for Run button: Command + Enter
+
+- Use `#` for comments
+
+[ Demo ]
+
+## R Markdown
 
 - R Markdown is an authoring format that enables easy creation of dynamic documents, 
 presentations, and reports from R. 
@@ -112,23 +134,8 @@ whenever underlying R code or data changes).
 
 Source: http://rmarkdown.rstudio.com/
 
-## Your turn!
+[ Demo ]
 
-Create your first R Markdown document, knit it, and examine the source code 
-and the output.
-
-1. File $\rightarrow$ R Markdown...
-
-2. Enter a title (e.g. "My first R Markdown document") and author info
-
-3. Choose Document as file type, and HTML as the output
-
-4. Hit OK
-
-5. Click Knit HTML in the new document, which will prompt you to save your document
-    - Naming tip: Do not use spaces
-    - Viewing tip: Click on the down arrow next to Knit HTML and select View in Pane
-    
 ## Markdown basics {.smaller}
 
 - Markdown is a simple formatting language designed to make authoring content easy for 
@@ -141,37 +148,22 @@ of a syntax much more like plain-text email.
 
 ## R Code Chunks {.smaller}
 
-Within an R Markdown file, R Code Chunks can be embedded using the native Markdown syntax 
+- Within an R Markdown file, R Code Chunks can be embedded using the native Markdown syntax 
 for fenced code regions.
+
+- Comments can go in the chunks wih `#` or just as plain text outside the chunks
 
 ![Code chunks](img/markdownChunk.png)
 
 ## Your turn!
 
-How many code chunks are in your R Markdown document?
+- Open a new R Markdown documen and Knit it
 
-What does each code chunk do? You may not understand the R syntax yet,
+- How many code chunks are in your R Markdown document?
+
+- What does each code chunk do? You may not understand the R syntax yet,
 but you should be able to compare the source file and the output to answer
 this question.
-
-## Inline R Code
-
-You can also evaluate R expressions inline by enclosing the expression within a single 
-back-tick qualified with ‘r’. For example, the following code:
-
-![Inline code](img/markdownInline.png)
-
-Results in this output: "I counted `r 1 + 1` red trucks on the highway."
-
-## Your turn!
-
-Suppose Sammy works on average 8.37 hours per day, 5 days
-per week. How many hours does Sammy work on average per week?
-
-Add a sentence to your document that includes simple inline R code that answers
-this question, along the lines of...
-
-"Sammy works 8.37 * 5 hours per week, on average."
 
 ## Workspaces
 
@@ -182,57 +174,17 @@ tab, it is not going to be automatically included in your R Markdown document
 
 - If you define a variable in your R Markdown document, it won't automatically
 be available in your Console
-    
-[ Demo ]
 
 **Tip\:** Use the *Run all previous chunks* in the source file and *Run current chunk
 code* functionality in the buttons in each code chunk to help manage workspaces.
-
-## Workspaces and reproducibilty
-
-- The fact that the two workspaces do not automatically have access to the same variables
-might / will be frustrating at first.
-
-- But this is not a bug, in fact, it's a functionality that helps reproducibility, as it
-ensures that all variables, functions, etc. that are being used in the R Markdown 
-document are explicitly defined or loaded.
-
-## Your turn! {.smaller}
-
-1. Define `x = 2` in the Console. Then, in your Console run `x * 3`. Does your code 
-run as expected?
-
-2. Now, insert a new code chunk in your R Markdown document and in this chunk type
-`x * 3` only. Knit your document. Does the document compile, or do you get an error?
-If you get an error, what does the error say, and how can you fix it? Implement the fix 
-and Knit your document. Make sure you are able to compile without errors before you 
-move on.
-
-**Tip\:** Insert a new code chunk bu clicking Chunks $\rightarrow$ Insert Chunk.
-
-3. Next insert another code chunk in your R Markdown document and define `y = 4` and
-calculate `y + 5`. Knit your document. Does everything work as expected?
-
-4. Now run `y + 5` in your Console. Does your code run as expected or do you get an error?
-If you get an error, what does the error say, and how can you fix it? Implement the fix.
-
-## Code chunk options
-
-- You can hide the code, hide the result, hide warnings, messages, etc.
-
-- Refer to the handy R Markdown 
-[cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
-
-- Another good reference: http://rmarkdown.rstudio.com/authoring_rcodechunks.html
 
 # Loading data
 
 ## NC DOT Fatal Crashes in North Carolina {.smaller}
 
 ```{r load-data}
-bike <- read.csv("https://stat.duke.edu/~mc301/data/nc_bike_crash.csv", 
-                 sep = ";", stringsAsFactors = FALSE, na.strings = c("NA", "", ".")) %>%
-  tbl_df()
+bike <- read_csv2("https://stat.duke.edu/~mc301/data/nc_bike_crash.csv", 
+                 na = c("NA", "", "."))
 ```
 
 View the names of variables via
@@ -242,30 +194,40 @@ names(bike)
 
 and see detailed descriptions at https://stat.duke.edu/~mc301/data/nc_bike_crash.html.
 
-## Aside: Strings (characters) vs factors
+## Other functions for loading data
 
-- By default R will convert character vectors into factors when they are
-included in a data frame.
+- You might be familiar with the `read.csv()` function for loading data
+from a csv file into R.
 
-- Sometimes this is useful, sometimes it isn't – either way it is 
+- If using the `read.csv()` function R will convert character vectors 
+into factors when they are included in a data frame.
+
+- Sometimes this is useful, sometimes it isn't -– either way it is 
 important to know what type/class you are working with.
 
 - This behavior can be changed using the `stringsAsFactors = FALSE` 
 when loading a data drame.
 
-![stringsAsFactorsHELLNO](img/stringsAsFactors.jpg)
-
-## Viewing your data {.smaller}
+## Viewing your data 1 {.smaller}
 
 - In the Environment, click on the name of the data frame to view
 it in the data viewer
 
-- Use the `str()` function to compactly display the internal **str**ucture 
+## Viewing your data 2 {.smaller}
+
+- Use the `str()` function to compactly display the internal **str**ucture
 of an R object
 
 ```{r}
 str(bike)
 ```
+
+## Viewing your data 3 {.smaller}
+
+```{r}
+glimpse(bike)
+```
+
 
 # Data manipulation
 
@@ -275,7 +237,7 @@ str(bike)
 
 - Using the `tidyr` and `dplyr` packages $\leftarrow$ our focus today
 
-- Using a variety of other packages from the Tidyverse like `plyr`, `lubridate`, etc.
+- Using a variety of other packages from the tidyverse like `plyr`, `lubridate`, etc.
 
 ## Data wrangling with `dplyr`
 
