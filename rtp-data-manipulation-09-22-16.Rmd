@@ -9,23 +9,16 @@ output: ioslides_presentation
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Intro
-
-## TO DO TO FINALIZE
-
-- Remove R Markdown (or add notebook)
-
-- Add some tidyr
-
-- Add one other exercise at the end
+# Welcome to R-Ladies RTP!
 
 ## Outline
 
 - Introduction to R and RStudio
-- Reproducible data analysis with R Markdown
+- Documenting your code
 - Loading data
-- Data wrangling
+- Data manipulation with dplyr
 - Basic R syntax
+- Tidying up messy data with tidyr
 - What next?
 - Hands on exercises
 
@@ -33,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 - All source code at https://github.com/rladies/rtp-data-manipulation-09-22-16
 
-- Slides at [???]
+- Slides at http://rpubs.com/minebocek/rladies-dplyr-tidyr
 
 # Introduction to R and RStudio
 
@@ -123,66 +116,24 @@ the Packages pane in RStudio
 
 ## R Markdown
 
-- R Markdown is an authoring format that enables easy creation of dynamic documents, 
-presentations, and reports from R. 
+- R Markdown is an authoring format that enables easy creation of dynamic 
+documents, presentations, and reports from R. 
 
-- It combines the core syntax of markdown (an easy-to-write plain text format) with 
-embedded R code chunks that are run so their output can be included in the final document.
+- R Markdown documents are fully **reproducible** (they can be 
+automatically regenerated whenever underlying R code or data changes).
 
-- R Markdown documents are fully **reproducible** (they can be automatically regenerated 
-whenever underlying R code or data changes).
+- Code goes in code chunks
+
+- Comments can go in the chunks wih `#` or just as plain text outside 
+the chunks
 
 Source: http://rmarkdown.rstudio.com/
-
-[ Demo ]
-
-## Markdown basics {.smaller}
-
-- Markdown is a simple formatting language designed to make authoring content easy for 
-everyone. 
-
-- Rather than writing complex markup code (e.g. HTML or LaTeX), Markdown enables the use 
-of a syntax much more like plain-text email. 
-
-![Markdown overview](img/markdownOverview.png)
-
-## R Code Chunks {.smaller}
-
-- Within an R Markdown file, R Code Chunks can be embedded using the native Markdown syntax 
-for fenced code regions.
-
-- Comments can go in the chunks wih `#` or just as plain text outside the chunks
-
-![Code chunks](img/markdownChunk.png)
-
-## Your turn!
-
-- Open a new R Markdown documen and Knit it
-
-- How many code chunks are in your R Markdown document?
-
-- What does each code chunk do? You may not understand the R syntax yet,
-but you should be able to compare the source file and the output to answer
-this question.
-
-## Workspaces
-
-R Markdown workspace and Console workspace are independent of each other
-
-- If you define a variable in your Console and it shows up in the Environment
-tab, it is not going to be automatically included in your R Markdown document
-
-- If you define a variable in your R Markdown document, it won't automatically
-be available in your Console
-
-**Tip\:** Use the *Run all previous chunks* in the source file and *Run current chunk
-code* functionality in the buttons in each code chunk to help manage workspaces.
 
 # Loading data
 
 ## NC DOT Fatal Crashes in North Carolina {.smaller}
 
-```{r load-data}
+```{r load-data, message=FALSE}
 bike <- read_csv2("https://stat.duke.edu/~mc301/data/nc_bike_crash.csv", 
                  na = c("NA", "", "."))
 ```
@@ -205,17 +156,17 @@ into factors when they are included in a data frame.
 - Sometimes this is useful, sometimes it isn't -– either way it is 
 important to know what type/class you are working with.
 
-- This behavior can be changed using the `stringsAsFactors = FALSE` 
-when loading a data drame.
+- This behavior `in read.csv` can be changed using the 
+`stringsAsFactors = FALSE` option when loading a data drame.
 
-## Viewing your data 1 {.smaller}
+## Viewing your data 1
 
-- In the Environment, click on the name of the data frame to view
+In the Environment, click on the name of the data frame to view
 it in the data viewer
 
 ## Viewing your data 2 {.smaller}
 
-- Use the `str()` function to compactly display the internal **str**ucture
+Use the `str()` function to compactly display the internal **str**ucture
 of an R object
 
 ```{r}
@@ -224,12 +175,25 @@ str(bike)
 
 ## Viewing your data 3 {.smaller}
 
+Use the `glimpse()` function to see all variables and the data in them
+
 ```{r}
 glimpse(bike)
 ```
 
+## Tidy data
 
-# Data manipulation
+- In **tidy data**
+    1. Each variable forms a column
+    2. Each observation forms a row
+    3. Each type of observational unit forms a table
+
+- **Messy data** is any other other arrangement of the data
+  - `tidyr` package is helpful for converting messy data to tidy data
+
+- We'll start with tidy data, and then move on to tidying up messy data
+
+# Data manipulation with dplyr
 
 ## Data manipulation in R
 
@@ -239,7 +203,7 @@ glimpse(bike)
 
 - Using a variety of other packages from the tidyverse like `plyr`, `lubridate`, etc.
 
-## Data wrangling with `dplyr`
+## Verbs of `dplyr`
 
 The `dplyr` package is based on the concepts of functions as verbs that 
 manipulate data frames:
@@ -369,6 +333,28 @@ bike %>%
   summarise(count = n())
 ```
 
+## Alternative for counting {.smaller}
+
+You can also count using the `count()` function
+
+```{r}
+bike %>%
+  group_by(BikeAge_Gr) %>%
+  count()
+```
+
+## Summarise any summary statistics
+
+We can use the same format for calculating other summary statistics
+
+```{r}
+bike %>%
+  group_by(CrashAlcoh) %>%
+  summarise(mean_age = mean(Bike_Age, na.rm = TRUE), 
+            median_age = median(Bike_Age, na.rm = TRUE))
+```
+
+
 ## `slice()` for certain row numbers {.smaller}
 
 First five
@@ -470,7 +456,7 @@ package vignette.
 
 ## Few important R syntax notes
 
-For when not working with `dplyr` or `ggplot2`
+For when not working with `dplyr`
 
 - Refer to a variable in a dataset as `bike$Crash_Loc`
 
@@ -482,6 +468,63 @@ bike[1,5] # row 1, column 5
     
     - For all observations in row 1: `bike[1, ]`
     - For all observations in column 5: `bike[, 5]`
+    
+# Tidying up messy data with tidyr
+
+## Separating a column into multiple columns
+
+```{r}
+bike <- separate(bike, col = Location, into = c("Lat", "Lon"), 
+                 sep = ", ", remove = FALSE)
+
+bike %>%
+  select(Location, Lat, Lon) %>%
+  head(5)
+```
+
+## Uniting multiple columns into a single column
+
+```{r}
+bike <- unite(bike, col = ID, FID, OBJECTID, remove = FALSE)
+
+bike %>%
+  select(FID, OBJECTID, ID) %>%
+  head(5)
+```
+
+## Changing gears...
+
+Let's take a look at a new dataset:
+
+```{r load-hdi, message=FALSE}
+hdi <- read_csv("https://stat.duke.edu/~mc301/data/hdi.csv")
+```
+
+## Wide to long data with `gather`
+
+```{r}
+hdi_long <- gather(hdi, key = year, value = hd_index, hdi_1980:hdi_2011)
+
+head(hdi_long)
+```
+
+## Let's do a little bit better...
+
+```{r}
+hdi_long <- hdi_long %>%
+  mutate(year = as.numeric(str_replace(year, "hdi_", "")))
+
+head(hdi_long)
+```
+
+## Long to wide data with `spread`
+
+```{r}
+hdi_wide <- spread(hdi_long, key = year, value = hd_index)
+
+head(hdi_wide)
+```
+
 
 # What's next?
 
@@ -504,8 +547,25 @@ bike[1,5] # row 1, column 5
 
 ## Your turn
 
-Create a new dataframe that doesn't include observations where `Bike_Injur = Injury` since 
-it's not clear what this means.
+Create a new dataframe that doesn't include observations where 
+`Bike_Injur = "Injury"` since it's not clear what this means.
 
-This new dataframe also should include observations in Durham, and where the biker
-is a teenager (13 to 19 years, inclusive).
+This new dataframe only should include observations in Durham County, and 
+where the biker is a teenager (13 to 19 years, inclusive).
+
+Then, calculate the number of accidents for each type of bike direction (`Bike_Dir`).
+
+## Your turn - solution
+
+```{r}
+bike2 <- bike %>%
+  filter(Bike_Injur != "Injury") %>%
+  filter(County == "Durham") %>%
+  filter(between(Bike_Age, 13, 19))
+
+bike2 %>%
+  group_by(Bike_Dir) %>%
+  count()
+```
+
+
