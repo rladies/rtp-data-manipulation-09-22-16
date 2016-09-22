@@ -2,7 +2,7 @@
 
 Materials for the Data manipulation in R with dplyr and tidyr R-Ladies RTP meetup. 
 
-**Note that the materials are currently work in progress: They will be finalized by the meetup date.**
+Slides can be viewed at http://rpubs.com/minebocek/rladies-dplyr-tidyr.
 
 Sign up at https://www.meetup.com/R-Ladies-RTP/events/233728036/.
 
