@@ -5,6 +5,7 @@
 - Once both are installed, open RStudio and run the following lines of code in the Console
 
 ```{r}
+install.packages("readr")
 install.packages("dplyr")
 install.packages("tidyr")
 ```
@@ -12,6 +13,7 @@ install.packages("tidyr")
 and then
 
 ```{r}
+library(readr)
 library(dplyr)
 library(tidyr)
 ```
