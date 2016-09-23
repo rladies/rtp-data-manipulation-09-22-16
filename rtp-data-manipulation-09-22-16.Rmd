@@ -72,9 +72,6 @@ knitr::opts_chunk$set(echo = TRUE)
 functions, the documentation that describes how to use them, and (often) sample data.
 (From: http://r-pkgs.had.co.nz)
 
-- We will use the `ggplot2` package for plots and `dplyr` for data wrangling in this
-workshop
-
 - Install these packages by running the following in the Console:
 ```{r install-packages, eval=FALSE}
 install.packages("readr")
